@@ -13,10 +13,11 @@ class _ChatScreenState extends State<ChatScreen> {
   final textController = TextEditingController();
   List<UserMessage>? messages = [];
   OpenChannel? channel;
-
+  bool isLoading = false;
   @override
   void initState() {
     super.initState();
+    setState(() => isLoading = true);
     initData();
   }
 
@@ -95,118 +96,122 @@ class _ChatScreenState extends State<ChatScreen> {
       body: Column(
         children: [
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              reverse: true,
-              itemCount: messages?.length,
-              itemBuilder: (context, index) {
-                if (messages![index].sender?.userId != userId) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const CircleAvatar(
-                            child: Icon(Icons.person),
-                          ),
-                          const SizedBox(width: 10),
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            padding: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              color: Color(0xff1A1A1A),
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20),
-                                bottomLeft: Radius.circular(20),
-                                bottomRight: Radius.circular(20),
-                              ),
-                            ),
-                            child: Column(
+            child: isLoading
+                ? const ActivityIndicator()
+                : ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    reverse: true,
+                    itemCount: messages?.length,
+                    itemBuilder: (context, index) {
+                      if (messages![index].sender?.userId != userId) {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  messages![index].sender?.nickname ?? "",
-                                  style:
-                                      const TextStyle(color: Color(0xffADADAD)),
-                                  overflow: TextOverflow.ellipsis,
+                                const CircleAvatar(
+                                  child: Icon(Icons.person),
                                 ),
-                                const SizedBox(height: 10),
-                                Text(
-                                  messages![index].message,
-                                  softWrap: true,
-                                  style: const TextStyle(fontSize: 20),
+                                const SizedBox(width: 10),
+                                Container(
+                                  margin: const EdgeInsets.only(bottom: 10),
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xff1A1A1A),
+                                    borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(20),
+                                      bottomLeft: Radius.circular(20),
+                                      bottomRight: Radius.circular(20),
+                                    ),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        messages![index].sender?.nickname ?? "",
+                                        style: const TextStyle(
+                                            color: Color(0xffADADAD)),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        messages![index].message,
+                                        softWrap: true,
+                                        style: const TextStyle(fontSize: 20),
+                                      ),
+                                      const SizedBox(height: 1),
+                                    ],
+                                  ),
                                 ),
-                                const SizedBox(height: 1),
                               ],
                             ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            formatKoreanTime(messages![index].createdAt),
-                            style: const TextStyle(color: Color(0xffADADAD)),
-                          ),
-                        ],
-                      )
-                    ],
-                  );
-                } else {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      const SizedBox(width: 10),
-                      Container(
-                        margin: const EdgeInsets.only(bottom: 10),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [
-                              Color(
-                                  0xFFFF006B), // Replace with your desired color
-                              Color(
-                                  0xFFFF4593), // Replace with your desired color
-                            ],
-                            stops: [0.1097, 0.7357],
-                          ),
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(20),
-                            bottomLeft: Radius.circular(20),
-                            bottomRight: Radius.circular(20),
-                          ),
-                          border: Border.all(
-                            color: const Color(0xff323232),
-                          ),
-                        ),
-                        constraints:
-                            BoxConstraints(maxWidth: size.width / 2 + 10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 3),
-                            Text(
-                              messages![index].message ?? "",
-                              softWrap: true,
-                              style: const TextStyle(fontSize: 20),
-                            ),
-                            const SizedBox(height: 1),
+                            Column(
+                              children: [
+                                Text(
+                                  formatKoreanTime(messages![index].createdAt),
+                                  style:
+                                      const TextStyle(color: Color(0xffADADAD)),
+                                ),
+                              ],
+                            )
                           ],
-                        ),
-                      ),
-                    ],
-                  );
-                }
-              },
-            ),
+                        );
+                      } else {
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const SizedBox(width: 10),
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 10),
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color(
+                                        0xFFFF006B), // Replace with your desired color
+                                    Color(
+                                        0xFFFF4593), // Replace with your desired color
+                                  ],
+                                  stops: [0.1097, 0.7357],
+                                ),
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(20),
+                                  bottomLeft: Radius.circular(20),
+                                  bottomRight: Radius.circular(20),
+                                ),
+                                border: Border.all(
+                                  color: const Color(0xff323232),
+                                ),
+                              ),
+                              constraints:
+                                  BoxConstraints(maxWidth: size.width / 2 + 10),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 3),
+                                  Text(
+                                    messages![index].message ?? "",
+                                    softWrap: true,
+                                    style: const TextStyle(fontSize: 20),
+                                  ),
+                                  const SizedBox(height: 1),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      }
+                    },
+                  ),
           ),
           Container(
             padding: const EdgeInsets.all(8.0),
