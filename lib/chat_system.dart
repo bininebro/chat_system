@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:sendbird_sdk/sendbird_sdk.dart';
 
@@ -38,13 +39,19 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   initData() async {
-    final sendbird = SendbirdSdk(appId: 'BC823AD1-FBEA-4F08-8F41-CF0D9D280FBF');
-    await sendbird.connect(userId, nickname: 'Biniyam');
-    channel = await OpenChannel.getChannel(
-        "sendbird_open_channel_14092_bf4075fbb8f12dc0df3ccc5c653f027186ac9211");
-    channel?.enter();
+    try {
+      final sendbird =
+          SendbirdSdk(appId: 'BC823AD1-FBEA-4F08-8F41-CF0D9D280FBF');
+      await sendbird.connect(userId, nickname: 'BiniyamN');
+      channel = await OpenChannel.getChannel(
+          "sendbird_open_channel_14092_bf4075fbb8f12dc0df3ccc5c653f027186ac9211");
+      channel?.enter();
 
-    sendbird.addChannelEventHandler('CALLBACK_ID', EventListen(onMessage));
+      sendbird.addChannelEventHandler('CALLBACK_ID', EventListen(onMessage));
+      setState(() => isLoading = false);
+    } catch (e) {
+      print('$e');
+    }
   }
 
   onMessage(UserMessage? message) {
@@ -97,7 +104,7 @@ class _ChatScreenState extends State<ChatScreen> {
         children: [
           Expanded(
             child: isLoading
-                ? const ActivityIndicator()
+                ? const CupertinoActivityIndicator()
                 : ListView.builder(
                     padding: const EdgeInsets.all(16),
                     reverse: true,
